@@ -4,21 +4,27 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.time.LocalDateTime;
 
 public class MessageGUI extends JFrame{
     private final JFileChooser jFileChooser = new JFileChooser(new File("."));
-    public JTextPane type;
-    public JTextPane content;
-    public boolean is_send = false;
-    public boolean img_selected = false;
-    public String img_path = "";
-    public JTextField PortText;
-    public JTextField IPText;
-    public JButton selectImage;
-    public CLIENT sc_msg, sc_img;
+    static public JTextPane type;
+    static public JTextPane content;
+    static public boolean is_send = false;
+    static public boolean img_selected = false;
+    static public String img_path = "";
+    static public JTextField PortText;
+    static public JTextField IPText;
+    static public JButton selectImage;
+    static public DataOutputStream output;
+    static public Socket sc_msg, sc_img;
+    /*------------image values---------------*/
+    static int image_num = 0;
+    /*-------------text values---------------*/
+    /*---------------------------------------*/
     public MessageGUI(String Title) {
         super.setLocation(0,0);
         super.setVisible(true);
@@ -35,7 +41,7 @@ public class MessageGUI extends JFrame{
         StyleConstants.setAlignment(aSet, StyleConstants.ALIGN_LEFT);
         jTextPane.setCharacterAttributes(aSet,true);
     }
-    static void UpToWindow(Document source, Document dest) {
+    void UpToWindow(Document source, Document dest) {
         try {
 //            dest.remove(0, dest.getLength());
 
@@ -99,8 +105,9 @@ public class MessageGUI extends JFrame{
                 }*/
 
                 try {
-                    sc_msg = new CLIENT(IPText.getText(), PortText.getText());
-                    sc_img = new CLIENT(IPText.getText(), "5501");
+
+                    sc_msg = new Socket(IPText.getText(),Integer.parseInt(PortText.getText()));
+                    sc_img = new Socket(IPText.getText(), 5501);
 
                     new rcvImg();
                     new rcvMsg();
@@ -157,6 +164,7 @@ public class MessageGUI extends JFrame{
                         throw new RuntimeException(ex);
                     }
                 }
+                img_selected = true;
             }
         });
         container.add(selectImage);
@@ -187,25 +195,59 @@ public class MessageGUI extends JFrame{
         super.setContentPane(container);
         super.setSize(360,506);
     }
-    public void autoFilled() {
+    static public void autoFilled() {
         PortText.setText("5500");
         IPText.setText("localhost");
     }
-    public class rcvImg extends Thread{
+    static public class rcvImg extends Thread{
         public rcvImg(){ new Thread(this).start();}
 
         public void run(){
-
+            while (true) {
+                try {
+                    BufferedInputStream bufferStream;
+                    InputStream ins = sc_img.getInputStream();
+                    bufferStream = new BufferedInputStream(ins);
+                    byte[] buffer = new byte[1024];
+                    ByteArrayOutputStream OutputBuffer = new ByteArrayOutputStream();
+                    int InputBuffer_length;
+                    while ((InputBuffer_length = bufferStream.read(buffer)) > 0) {OutputBuffer.write(buffer, 0, InputBuffer_length);}
+                    OutputStream out = new FileOutputStream("CacheImage-" + image_num +".jpg");
+                    OutputBuffer.writeTo(out);
+                    out.close();
+                    sc_img.shutdownInput();
+                    // in.close();
+                    content.insertIcon(new ImageIcon(".CacheImage-" + image_num +".jpg"));
+                    image_num++;
+                    content.setCaretPosition(content.getDocument().getLength());
+                } catch (Exception e) {
+                    //content.setText(content.getText()+"Image Receive Error:"+e);
+                }
+            }
         }
     }
-    public class rcvMsg extends Thread{
+    static public class rcvMsg extends Thread{
         public rcvMsg(){ new Thread(this).start();}
 
         public void run(){
+            while (true){
+                try{
+                    String str = "";
+                    DataInputStream input;
+                    input = new DataInputStream(sc_msg.getInputStream());
+                    str = input.readUTF();
+                    if (!str.equals("")) {
+                        content.setText(content.getText()+"\nServer: "+str);
+                    }
+                }catch (Exception e){
+
+                }
+            }
+
 
         }
     }
-    public class sendMsg extends Thread{
+    static public class sendMsg extends Thread{
 
         private String str;
 
@@ -216,11 +258,28 @@ public class MessageGUI extends JFrame{
         }
         public void run(){
             if(img_selected){
-
+                img_selected = false;
+                try {
+                    type.setText("");
+                    if (!type.getText().equals("")) {
+                        output = new DataOutputStream(sc_msg.getOutputStream());
+                        output.writeUTF(str);
+                        content.getDocument().insertString(content.getDocument().getLength(), "Client IP: ",null);
+                        content.insertIcon(new ImageIcon(img_path));
+                        content.setCaretPosition(content.getDocument().getLength());
+                    }
+                } catch (Exception e) {
+                    System.out.println("訊息傳送失敗");
+                }
             }
             else {
                 if(!str.equals("")){
-                    sc_msg.send(type.getText());
+                    try {
+                        output = new DataOutputStream(sc_msg.getOutputStream());
+                        output.writeUTF(str);
+                    } catch (IOException e) {
+                       System.out.println("訊息傳送失敗"+e);
+                    }
                 }
             }
 
