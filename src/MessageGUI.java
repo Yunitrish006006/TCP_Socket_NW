@@ -62,23 +62,50 @@ public class MessageGUI extends JFrame{
         }
     }
     public void setUpUI() throws IOException {
-
+        int max_y = 0;
+        /*----------------------frame--------------------------*/
         Container container = super.getContentPane();
         container.setLayout(null);
+        /*--------------------------ip-------------------------*/
+        JLabel IPLabel = new JLabel("IP");
+        IPLabel.setBounds(10, 10, 14, 15);
+        container.add(IPLabel);
 
+        JTextField IPText = new JTextField();
+        IPText.setBounds(24, 8, 112, 21);
+        IPText.setColumns(10);
+        container.add(IPText);
+        /*-----------------------port--------------------------*/
+        JLabel PortLabel = new JLabel("Port");
+        PortLabel.setBounds(138, 10, 28, 15);
+        container.add(PortLabel);
+
+        JTextField PortText = new JTextField();
+        PortText.setColumns(10);
+        PortText.setBounds(168, 8, 96, 21);
+        container.add(PortText);
+        /*------------------connect button---------------------*/
+        JButton connect = new JButton("連線");
+        connect.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+        connect.setBounds(266, 7, 64, 21);
+        container.add(connect);
+        max_y = 29;
+        /*--------------------message box----------------------*/
         content = new JTextPane();
-        content.setBounds(10, 69, 325, 242);
+        content.setBounds(10, max_y+3, 325, max_y+250);
         content.setEditable(false);
         JScrollPane in_content = new JScrollPane(content, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        in_content.setBounds(10, 69, 325, 242);
+        in_content.setBounds(10, max_y+3, 325, max_y+250);
         container.add(in_content);
-
-        type = new JTextPane();
-        type.setBounds(10, 354, 325, 101);
-        container.add(type);
-
+        max_y += 253;
+        /*--------------------operations-----------------------*/
         JButton selectImage = new JButton("圖片");
-        selectImage.setBounds(10, 321, 85, 23);
+        selectImage.setBounds(10, max_y+30, 60, 23);
         selectImage.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -118,34 +145,21 @@ public class MessageGUI extends JFrame{
         send.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                 is_send = true;
-                 System.out.println("hi");
+                is_send = true;
             }
         });
-        send.setBounds(120, 321, 85, 23);
+        send.setBounds(70, max_y+30, 60, 23);
         container.add(send);
 
         JButton Exit = new JButton("結束");
-        Exit.setBounds(229, 321, 85, 23);
+        Exit.setBounds(275, max_y+30, 60, 23);
         container.add(Exit);
-
-        JLabel IPLabel = new JLabel("IP");
-        IPLabel.setBounds(10, 32, 85, 15);
-        container.add(IPLabel);
-
-        JLabel PortLabel = new JLabel("Port");
-        PortLabel.setBounds(181, 32, 85, 15);
-        container.add(PortLabel);
-
-        JTextField IPText = new JTextField();
-        IPText.setBounds(62, 29, 112, 21);
-        getContentPane().add(IPText);
-        IPText.setColumns(10);
-
-        JTextField PortText = new JTextField();
-        PortText.setColumns(10);
-        PortText.setBounds(239, 29, 96, 21);
-        getContentPane().add(PortText);
+        max_y+=56;
+        /*----------------------type box-----------------------*/
+        type = new JTextPane();
+        type.setBounds(10, max_y, 325, 121);
+        container.add(type);
+        /*-----------------------final-------------------------*/
         super.setContentPane(container);
         super.setSize(360,506);
     }
