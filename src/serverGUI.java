@@ -8,18 +8,17 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.time.LocalDateTime;
 
-public class MessageGUI extends JFrame{
+public class serverGUI extends JFrame{
     private final JFileChooser jFileChooser = new JFileChooser(new File("."));
     public JTextPane type;
     public JTextPane content;
     public boolean is_send = false;
-    public boolean img_selected = false;
     public String img_path = "";
     public JTextField PortText;
     public JTextField IPText;
-    public JButton selectImage;
     public CLIENT sc_msg, sc_img;
-    public MessageGUI(String Title) {
+    public ServerSocket ss_msg,ss_img;
+    public serverGUI(String Title) {
         super.setLocation(0,0);
         super.setVisible(true);
         super.setResizable(false);
@@ -102,9 +101,6 @@ public class MessageGUI extends JFrame{
                     sc_msg = new CLIENT(IPText.getText(), PortText.getText());
                     sc_img = new CLIENT(IPText.getText(), "5501");
 
-                    new rcvImg();
-                    new rcvMsg();
-
                     IPText.setEditable(false);
                     PortText.setEditable(false);
                     type.setEditable(true);
@@ -126,12 +122,11 @@ public class MessageGUI extends JFrame{
         container.add(in_content);
         max_y += 253;
         /*--------------------operations-----------------------*/
-         selectImage = new JButton("圖片");
+        JButton selectImage = new JButton("圖片");
         selectImage.setBounds(10, max_y+30, 60, 23);
         selectImage.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
                 //開啟檔案選擇器對話方塊
                 int status = jFileChooser.showOpenDialog(selectImage);
                 if (status == JFileChooser.APPROVE_OPTION) {
@@ -191,20 +186,7 @@ public class MessageGUI extends JFrame{
         PortText.setText("5500");
         IPText.setText("localhost");
     }
-    public class rcvImg extends Thread{
-        public rcvImg(){ new Thread(this).start();}
 
-        public void run(){
-
-        }
-    }
-    public class rcvMsg extends Thread{
-        public rcvMsg(){ new Thread(this).start();}
-
-        public void run(){
-
-        }
-    }
     public class sendMsg extends Thread{
 
         private String str;
@@ -215,16 +197,16 @@ public class MessageGUI extends JFrame{
             new Thread(this).start();
         }
         public void run(){
-            if(img_selected){
-
+            if(!str.equals("")){
+                sc_msg.send(type.getText());
             }
-            else {
-                if(!str.equals("")){
-                    sc_msg.send(type.getText());
-                }
-            }
-
         }
     }
-
+    public static void main(String[] args) throws IOException {
+        serverGUI server_gui = new serverGUI("SERVER");
+        server_gui.setUpUI();
+    }
 }
+
+
+

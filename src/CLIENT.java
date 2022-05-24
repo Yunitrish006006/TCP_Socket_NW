@@ -2,7 +2,7 @@ import java.io.*;
 import java.net.Socket;
 
 public class CLIENT {
-    private Socket socket;
+    public Socket socket;
 
     private PrintWriter pw;
     private BufferedReader br;

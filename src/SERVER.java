@@ -3,7 +3,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class SERVER {
-    private int port =8008;//服务器监听窗口
+    private int port =5500;//服务器监听窗口
     private ServerSocket serverSocket;//定义服务器套接字
 
     public SERVER() throws IOException {
