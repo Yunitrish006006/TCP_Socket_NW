@@ -4,20 +4,18 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
+import java.time.LocalDateTime;
 
 public class MessageGUI extends JFrame{
-    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     private final JFileChooser jFileChooser = new JFileChooser(new File("."));
-    public JFrame gui = this;
     public JTextPane type;
     public JTextPane content;
     public boolean is_send = false;
     public String img_path = "";
-
-
-
-
-
+    public JTextField PortText;
+    public JTextField IPText;
+    public CLIENT tcpClient;
+    public Thread readThread;
     public MessageGUI(String Title) {
         super.setLocation(0,0);
         super.setVisible(true);
@@ -25,16 +23,7 @@ public class MessageGUI extends JFrame{
         super.setTitle(Title);
         super.setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
-    public void myStyle(JTextPane jTextPane) throws BadLocationException {
-        SimpleAttributeSet aSet = new SimpleAttributeSet();
-        StyleConstants.setForeground(aSet, Color.DARK_GRAY);
-        StyleConstants.setBackground(aSet, Color.RED);
-        StyleConstants.setFontFamily(aSet, "lucida bright italic");
-        StyleConstants.setFontSize(aSet, 20);
-        StyleConstants.setAlignment(aSet, StyleConstants.ALIGN_LEFT);
-        jTextPane.setCharacterAttributes(aSet,true);
-    }
-    public void theirStyle(JTextPane jTextPane) throws BadLocationException {
+    public void myStyle(JTextPane jTextPane) {
         SimpleAttributeSet aSet = new SimpleAttributeSet();
         StyleConstants.setForeground(aSet, Color.DARK_GRAY);
         StyleConstants.setBackground(aSet, Color.RED);
@@ -49,20 +38,22 @@ public class MessageGUI extends JFrame{
 
             ElementIterator iterator = new ElementIterator(source);
             Element element;
+
             while ((element = iterator.next()) != null) {
                 if (element.isLeaf()) {
                     int start = element.getStartOffset();
                     int end = element.getEndOffset();
                     String text = source.getText(start, end - start);
-                    dest.insertString(dest.getLength(), text, element.getAttributes());
+                    dest.insertString(dest.getLength(),"client: " + text, element.getAttributes());
                 }
             }
         } catch (BadLocationException e) {
             throw new RuntimeException(e);
         }
     }
+
     public void setUpUI() throws IOException {
-        int max_y = 0;
+        int max_y;
         /*----------------------frame--------------------------*/
         Container container = super.getContentPane();
         container.setLayout(null);
@@ -71,7 +62,7 @@ public class MessageGUI extends JFrame{
         IPLabel.setBounds(10, 10, 14, 15);
         container.add(IPLabel);
 
-        JTextField IPText = new JTextField();
+        IPText = new JTextField();
         IPText.setBounds(24, 8, 112, 21);
         IPText.setColumns(10);
         container.add(IPText);
@@ -80,7 +71,7 @@ public class MessageGUI extends JFrame{
         PortLabel.setBounds(138, 10, 28, 15);
         container.add(PortLabel);
 
-        JTextField PortText = new JTextField();
+        PortText = new JTextField();
         PortText.setColumns(10);
         PortText.setBounds(168, 8, 96, 21);
         container.add(PortText);
@@ -89,7 +80,39 @@ public class MessageGUI extends JFrame{
         connect.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                /*單程
+                try {
+                    tcpClient = new CLIENT(IPText.getText(), PortText.getText());
+                    //成功連線訊息
+                    String welcomeString = tcpClient.receive();
+                    content.setText(content.getText()+welcomeString+"\n");
+                    //等到傳訊息才能再次更改ip
+                    IPText.setEditable(false);
+                    PortText.setEditable(false);
+                    type.setEditable(false);
+                    connect.setEnabled(false);
+                }catch (Exception exception){
+                    content.setText(content.getText()+"Server連線失敗！"+exception.getMessage()+"\n");
+                }*/
 
+                try {
+                    tcpClient = new CLIENT(IPText.getText(), PortText.getText());
+                    readThread = new Thread(()->{
+                        String receiveMsg;
+                        while ((receiveMsg=tcpClient.receive())!=null){
+                            content.setText(content.getText()+LocalDateTime.now() +"\n");
+                            content.setText(content.getText()+ receiveMsg +"\n");
+                        }
+                    });
+
+                    readThread.start();
+                    IPText.setEditable(false);
+                    PortText.setEditable(false);
+                    type.setEditable(true);
+                    connect.setEnabled(false);
+                }catch (Exception exception){
+                    content.setText(content.getText()+"server connect failed！\n"+exception.getMessage()+"\n");
+                }
             }
         });
         connect.setBounds(266, 7, 64, 21);
@@ -111,10 +134,7 @@ public class MessageGUI extends JFrame{
             public void actionPerformed(ActionEvent e) {
                 //開啟檔案選擇器對話方塊
                 int status = jFileChooser.showOpenDialog(selectImage);
-                //沒有選開啟按鈕結果提示
-                if (status != JFileChooser.APPROVE_OPTION) {
-                    //#沒有選中檔案
-                } else {
+                if (status == JFileChooser.APPROVE_OPTION) {
                     try { //被選中的檔案儲存為檔案物件
                         File file = jFileChooser.getSelectedFile();
                         if(file!=null) {
@@ -146,6 +166,8 @@ public class MessageGUI extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 is_send = true;
+                UpToWindow(type.getStyledDocument(), content.getStyledDocument());
+                type.setText("");
             }
         });
         send.setBounds(70, max_y+30, 60, 23);
@@ -162,5 +184,9 @@ public class MessageGUI extends JFrame{
         /*-----------------------final-------------------------*/
         super.setContentPane(container);
         super.setSize(360,506);
+    }
+    public void autoFilled() {
+        PortText.setText("5500");
+        IPText.setText("localhost");
     }
 }
