@@ -2,15 +2,11 @@ package GUI;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class Window extends JFrame{
     public boolean connected = false;
-    private final String[] sourceName = {"Server", "Client"};
-    private int ID;
+    private final int ID;
     public JTextField IPText;
     public JTextField PortText;
     public JTextPane content;
@@ -64,24 +60,20 @@ public class Window extends JFrame{
         content = new JTextPane();
         content.setBounds(10, max_y+3, 325, max_y+250);
         content.setEditable(false);
-        JScrollPane in_content = new JScrollPane(content, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        JScrollPane in_content = new JScrollPane(content, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         in_content.setBounds(10, max_y+3, 325, max_y+250);
         container.add(in_content);
         max_y += 253;
         /*--------------------operations-----------------------*/
         JButton selectImage = new JButton("圖片");
         selectImage.setBounds(10, max_y+30, 60, 23);
-        selectImage.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JFileChooser chooser = new JFileChooser();             //设置选择器
-                chooser.setMultiSelectionEnabled(true);             //设为多选
-                int returnVal = chooser.showOpenDialog(selectImage);
-                if (returnVal == JFileChooser.APPROVE_OPTION) {          //如果符合文件类型
-                    Path.setText(chooser.getSelectedFile().getAbsolutePath());
-                    System.out.println("You chose to open this file: "+ chooser.getSelectedFile().getName());  //输出相对路径
-                    img_path = chooser.getSelectedFile().getName();
-                }
+        selectImage.addActionListener(e -> {
+            JFileChooser chooser = new JFileChooser();
+            chooser.setMultiSelectionEnabled(true);
+            int c = chooser.showOpenDialog(selectImage);
+            if (c == JFileChooser.APPROVE_OPTION) {
+                Path.setText(chooser.getSelectedFile().getAbsolutePath());
+                img_path = chooser.getSelectedFile().getName();
             }
         });
         container.add(selectImage);
@@ -108,9 +100,13 @@ public class Window extends JFrame{
     }
     public void display(String user, String message) throws BadLocationException {
         content.insertComponent(new JLabel(user+": "+message));
+        this.revalidate();
     }
     public void display(String user, ImageIcon imageIcon) {
         content.insertComponent(new JLabel(user+":"));
-        content.insertComponent(new JLabel(imageIcon));
+        content.insertIcon(imageIcon);
+        content.insertComponent(new JLabel("\n"));
+        this.revalidate();
+//        content.insertComponent(new JLabel(imageIcon));
     }
 }

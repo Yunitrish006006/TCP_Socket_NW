@@ -4,12 +4,13 @@ import javax.swing.text.BadLocationException;
 import java.io.IOException;
 public class Receiver implements Runnable{
     private final Window window;
+    private String Destination;
     public MSGProcessor processor;
     public static int Port;
 
     public Receiver(Window window,String destination) throws IOException {
         this.window = window;
-        System.out.println("ip: "+ Port);
+        this.Destination = destination;
         processor = new MSGProcessor(destination, Port);
     }
 

@@ -22,9 +22,9 @@ public class ImageSender implements Runnable{
                 try {
                     window.Path.setText("");
                     processor.send(path);
+                    System.out.println(path);
                     window.display("Client(" + processor.CIP + ")", new ImageIcon(path));
                     processor.sendImage(path);
-
                 } catch (Exception exception) {
                     JOptionPane.showMessageDialog(null, "No such file", "file error", JOptionPane.WARNING_MESSAGE);
                 }

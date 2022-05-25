@@ -38,7 +38,7 @@ public class MSGProcessor {
     public void sendImage(String path) throws IOException {
         this.socket = new Socket(Destination, Port);
         OutputStream os = socket.getOutputStream();
-            FileInputStream fis = new FileInputStream(path);
+            FileInputStream fis = new FileInputStream(new File(path));
                 byte[] b = new byte[1024];
                 int len;
                 while((len=fis.read(b))!=-1){
@@ -50,7 +50,7 @@ public class MSGProcessor {
     public void saveImage(String path) throws IOException {
         this.socket = new Socket(Destination, Port);
         InputStream is = socket.getInputStream();
-            FileOutputStream fos = new FileOutputStream(path);
+            FileOutputStream fos = new FileOutputStream(new File(path));
                 byte[] b = new byte[1024];
                 int len;
                 while((len = is.read(b))!=-1) {

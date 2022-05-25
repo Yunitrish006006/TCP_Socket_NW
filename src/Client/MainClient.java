@@ -18,7 +18,7 @@ public class MainClient {
             }
         });
         while (!window.connected) {
-            window.content.setText("connecting...");
+            System.out.println(" ");
         }
         window.revalidate();
 
@@ -35,17 +35,17 @@ public class MainClient {
         Thread thread3 = new Thread(imageSender);
         thread3.start();
 
-        MSGProcessor fc1 = processor;
+        MSGProcessor temp1 = processor;
         window.send.addActionListener(e -> {
             if (!window.type.getText().equals("")) {
                 try {
-                    window.display("Client(" + fc1.CIP + ")", window.type.getText());
+                    window.display("Client(" + temp1.CIP + ")", window.type.getText());
                 } catch (BadLocationException ex) {
                     throw new RuntimeException(ex);
                 }
                 window.revalidate();
                 try {
-                    fc1.send(window.type.getText());
+                    temp1.send(window.type.getText());
                 } catch (Exception exception) {
                     exception.printStackTrace();
                 }
