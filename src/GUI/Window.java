@@ -3,10 +3,11 @@ package GUI;
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import java.awt.*;
+import java.util.Objects;
 
 public class Window extends JFrame{
     public boolean connected = false;
-    private int ID;
+    public String info="";
     public JTextField IPText;
     public JTextField PortText;
     public JTextPane content;
@@ -16,7 +17,6 @@ public class Window extends JFrame{
     public String img_path = "";
     public JLabel Path;
     public Window(String Title, int ID) {
-        this.ID = ID;
         super.setLocation(300,200);
         super.setVisible(true);
         super.setResizable(false);
@@ -33,6 +33,7 @@ public class Window extends JFrame{
         /*----------------------frame--------------------------*/
         Container container = super.getContentPane();
         container.setLayout(null);
+        container.setBackground(new Color(110, 110, 110));
         /*--------------------------ip-------------------------*/
         JLabel IPLabel = new JLabel("IP");
         IPLabel.setBounds(10, 10, 14, 15);
@@ -58,9 +59,11 @@ public class Window extends JFrame{
         max_y = 29;
         /*--------------------message box----------------------*/
         content = new JTextPane();
+        content.setContentType("text/html");
+        content.setBackground(new Color(83, 203, 194));
         content.setBounds(10, max_y+3, 325, max_y+250);
         content.setEditable(false);
-        JScrollPane in_content = new JScrollPane(content, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        JScrollPane in_content = new JScrollPane(content, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         in_content.setBounds(10, max_y+3, 325, max_y+250);
         container.add(in_content);
         max_y += 253;
@@ -93,24 +96,48 @@ public class Window extends JFrame{
         /*----------------------type box-----------------------*/
         type = new JTextPane();
         type.setBounds(10, max_y, 325, 121);
+        type.setBackground(new Color(83, 203, 194));
         container.add(type);
         /*-----------------------final-------------------------*/
         super.setContentPane(container);
         super.setSize(360,506);
     }
     public void display(String user, String message) throws BadLocationException {
-        content.insertComponent(new JLabel(user+": "+message));
+        info+=user+":"+message.replaceAll("\n","<br>");
+        content.setText(info);
         this.revalidate();
     }
-    public void display(String user, ImageIcon imageIcon) {
-        content.insertComponent(new JLabel(user+":"));
-//        int width = imageIcon.getIconWidth();
-//        int height = imageIcon.getIconHeight();
-//        while (width>content.getWidth()) {
-//            width = width*4/5;
-//        }
-//        imageIcon = new ImageIcon(imageIcon.getImage().getScaledInstance(content.getWidth(),height,Image.SCALE_SMOOTH));
-        content.insertIcon(imageIcon);
+    public void display(String user, ImageIcon imageIcon,String img_path) {
+        int width = imageIcon.getIconWidth();
+        int height = imageIcon.getIconHeight();
+        while (width>content.getWidth()) {
+            width = width*4/5;
+            height = height*4/5;
+        }
+        Image image = imageIcon.getImage();
+        image.getScaledInstance(width,height,Image.SCALE_SMOOTH);
+        imageIcon.setImage(image);
+        if(user.startsWith("Client")) {
+            info+="<p>"+user+":</p>";
+            if(Objects.equals(img_path, "")) {
+                info+="<p>no path</p>";
+            }
+            else {
+                info+="<img src='file:\\"+img_path+"' alt='"+img_path+"' width='"+width+"' height='"+height+"'><br>";
+            }
+
+        }
+        else if(user.startsWith("Server")){
+            info+="<p>"+user+":</p>";
+            if(Objects.equals(img_path, "")) {
+                info+="<p>no path</p>";
+            }
+            else {
+                info+="<img src='file:"+img_path+"' alt='"+img_path+"' width='"+width+"' height='"+height+"'><br>";
+            }
+
+        }
+        content.setText(info);
         this.revalidate();
     }
 }

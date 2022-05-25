@@ -28,7 +28,7 @@ public class ImageReceiver implements Runnable{
                         break;
                     }
                     server.saveImage(msg.toString());
-                    window.display("Server(" + server.SIP + ")", new ImageIcon(msg.toString()));
+                    window.display("Server(" + server.SIP + ")", new ImageIcon(msg.toString()), msg.toString());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

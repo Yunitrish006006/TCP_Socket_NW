@@ -25,7 +25,7 @@ public class ImageSender implements Runnable{
                     window.Path.setText("");
                     processor.send(window.img_path);
                     System.out.println(window.img_path);
-                    window.display("Client(" + processor.CIP + ")", new ImageIcon(path));
+                    window.display("Client(" + processor.CIP + ")", new ImageIcon(path),path);
                     processor.sendImage(path);
                 } catch (Exception exception) {
                     JOptionPane.showMessageDialog(null, "No such file", "file error", JOptionPane.WARNING_MESSAGE);
