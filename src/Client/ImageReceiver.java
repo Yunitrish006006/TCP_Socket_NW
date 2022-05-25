@@ -7,10 +7,12 @@ import java.io.IOException;
 
 public class ImageReceiver implements Runnable{
     private Window window;
+    private String Destination;
     public MSGProcessor processor;
 
     public ImageReceiver(Window window,String destination) throws IOException {
         this.window = window;
+        this.Destination = destination;
         processor = new MSGProcessor(destination,Receiver.Port +2);
 
     }

@@ -39,6 +39,7 @@ public class MSGProcessor {
         socket.close();
         return buf;
     }
+    ///
     public void sendImage(String path) throws IOException {
         this.socket = this.serverSocket.accept();
         OutputStream os = socket.getOutputStream();

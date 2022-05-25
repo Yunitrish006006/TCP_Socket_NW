@@ -24,15 +24,14 @@ public class ImageSender implements Runnable{
             MSGProcessor temp = processor;
             while (Receiver.connected) {
                 window.send.addActionListener(e -> {
-                    if(!window.img_path.equals("")) {
+                    if(!window.Path.getText().equals("")) {
                         try {
-                            String path = window.img_path;
-                            window.img_path = "";
+                            String path = window.Path.getText();
+                            window.Path.setText("");
                             temp.send(window.img_path);
                             System.out.println(window.img_path);
                             window.display("Server(" + temp.SIP + ")", new ImageIcon(path));
                             temp.sendImage(path);
-
                         } catch (Exception exception) {
                             JOptionPane.showMessageDialog(null, "No such file", "file error", JOptionPane.WARNING_MESSAGE);
                         }

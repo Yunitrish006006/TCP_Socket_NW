@@ -6,7 +6,7 @@ import java.awt.*;
 
 public class Window extends JFrame{
     public boolean connected = false;
-    private final int ID;
+    private int ID;
     public JTextField IPText;
     public JTextField PortText;
     public JTextPane content;
@@ -104,9 +104,13 @@ public class Window extends JFrame{
     }
     public void display(String user, ImageIcon imageIcon) {
         content.insertComponent(new JLabel(user+":"));
+//        int width = imageIcon.getIconWidth();
+//        int height = imageIcon.getIconHeight();
+//        while (width>content.getWidth()) {
+//            width = width*4/5;
+//        }
+//        imageIcon = new ImageIcon(imageIcon.getImage().getScaledInstance(content.getWidth(),height,Image.SCALE_SMOOTH));
         content.insertIcon(imageIcon);
-        content.insertComponent(new JLabel("\n"));
         this.revalidate();
-//        content.insertComponent(new JLabel(imageIcon));
     }
 }

@@ -35,28 +35,30 @@ public class MSGProcessor {
         catch (Exception e) {in.close();}
         return buf;
     }
+    ////
     public void sendImage(String path) throws IOException {
         this.socket = new Socket(Destination, Port);
         OutputStream os = socket.getOutputStream();
-            FileInputStream fis = new FileInputStream(new File(path));
-                byte[] b = new byte[1024];
-                int len;
-                while((len=fis.read(b))!=-1){
-                    os.write(b,0,len);
-                }
-            fis.close();
+        FileInputStream fis = new FileInputStream(new File(path));
+        byte[] b = new byte[1024];
+        int len;
+        while((len=fis.read(b))!=-1){
+            os.write(b,0,len);
+        }
+        fis.close();
         os.close();
     }
     public void saveImage(String path) throws IOException {
         this.socket = new Socket(Destination, Port);
         InputStream is = socket.getInputStream();
-            FileOutputStream fos = new FileOutputStream(new File(path));
-                byte[] b = new byte[1024];
-                int len;
-                while((len = is.read(b))!=-1) {
-                    fos.write(b,0,len);
-                }
-            fos.close();
+        FileOutputStream fos = new FileOutputStream(new File(path));
+        byte[] b = new byte[1024];
+        int len;
+        while((len = is.read(b))!=-1) {
+            fos.write(b,0,len);
+        }
+        System.out.println("[Debug] get file");
+        fos.close();
         is.close();
     }
 }
