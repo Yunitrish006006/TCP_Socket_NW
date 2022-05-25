@@ -6,17 +6,18 @@ import java.awt.*;
 import java.util.Objects;
 
 public class Window extends JFrame{
-    public boolean connected = false;
+    public boolean linked = false;
     public String info="";
     public JTextField IPText;
     public JTextField PortText;
     public JTextPane content;
     public JTextPane type;
-    public JButton connect;
+    public JButton linkButton;
     public JButton send;
-    public String img_path = "";
-    public JLabel Path;
-    public Window(String Title, int ID) {
+    public String imagePathCache = "";
+    public JLabel ImagePathText;
+
+    public Window(String Title) {
         super.setLocation(300,200);
         super.setVisible(true);
         super.setResizable(false);
@@ -53,9 +54,9 @@ public class Window extends JFrame{
         PortText.setBounds(168, 8, 96, 21);
         container.add(PortText);
         /*------------------connect button---------------------*/
-        connect = new JButton("連線");
-        connect.setBounds(266, 7, 64, 21);
-        container.add(connect);
+        linkButton = new JButton("連線");
+        linkButton.setBounds(266, 7, 64, 21);
+        container.add(linkButton);
         max_y = 29;
         /*--------------------message box----------------------*/
         content = new JTextPane();
@@ -75,8 +76,8 @@ public class Window extends JFrame{
             chooser.setMultiSelectionEnabled(true);
             int c = chooser.showOpenDialog(selectImage);
             if (c == JFileChooser.APPROVE_OPTION) {
-                Path.setText(chooser.getSelectedFile().getAbsolutePath());
-                img_path = chooser.getSelectedFile().getName();
+                ImagePathText.setText(chooser.getSelectedFile().getAbsolutePath());
+                imagePathCache = chooser.getSelectedFile().getName();
             }
         });
         container.add(selectImage);
@@ -85,9 +86,9 @@ public class Window extends JFrame{
         send.setBounds(70, max_y+30, 60, 23);
         container.add(send);
 
-        Path = new JLabel("");
-        Path.setBounds(133,max_y+30,80,23);
-        container.add(Path);
+        ImagePathText = new JLabel("");
+        ImagePathText.setBounds(133,max_y+30,80,23);
+        container.add(ImagePathText);
 
         JButton Exit = new JButton("結束");
         Exit.setBounds(275, max_y+30, 60, 23);

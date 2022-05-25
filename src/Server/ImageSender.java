@@ -21,17 +21,17 @@ public class ImageSender implements Runnable{
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            MSGProcessor temp = processor;
+            MSGProcessor msgProcessor = processor;
             while (Receiver.connected) {
                 window.send.addActionListener(e -> {
-                    if(!window.Path.getText().equals("")) {
+                    if(!window.ImagePathText.getText().equals("")) {
                         try {
-                            String path = window.Path.getText();
-                            window.Path.setText("");
-                            temp.send(window.img_path);
-                            System.out.println(window.img_path);
-                            window.display("Server(" + temp.SIP + ")", new ImageIcon(path), path);
-                            temp.sendImage(path);
+                            String imagePathText = window.ImagePathText.getText();
+                            window.ImagePathText.setText("");
+                            msgProcessor.sendMessage(window.imagePathCache);
+                            System.out.println(window.imagePathCache);
+                            window.display("Server(" + msgProcessor.SIP + ")", new ImageIcon(imagePathText), imagePathText);
+                            msgProcessor.sendImage(imagePathText);
                         } catch (Exception exception) {
                             JOptionPane.showMessageDialog(null, "No such file", "file error", JOptionPane.WARNING_MESSAGE);
                         }

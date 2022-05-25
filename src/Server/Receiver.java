@@ -27,7 +27,7 @@ public class Receiver implements Runnable{
             while (connected) {
                 StringBuffer msg = null;
                 try {
-                    msg = server.read();
+                    msg = server.readMessage();
                     if (msg.toString().equals("disconnected!!!")) {
                         port += 8;
                         connected = false;

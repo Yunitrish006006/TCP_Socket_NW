@@ -17,53 +17,46 @@ public class MSGProcessor {
         CIP = socket.getInetAddress();
         SIP = socket.getLocalAddress();
     }
-    public void send(String msg) throws Exception {
+    public void sendMessage(String msg) throws Exception {
         this.socket = this.serverSocket.accept();
-        OutputStream os = this.socket.getOutputStream();
-        os.write(msg.getBytes(StandardCharsets.UTF_8));
-        os.close();
+        OutputStream outputStream = this.socket.getOutputStream();
+        outputStream.write(msg.getBytes(StandardCharsets.UTF_8));
+        outputStream.close();
         socket.close();
     }
-    public StringBuffer read() throws Exception {
+    public StringBuffer readMessage() throws Exception {
         this.socket = this.serverSocket.accept();
-        InputStream in = this.socket.getInputStream();
-        StringBuffer buf = new StringBuffer();
+        InputStream inputStream = this.socket.getInputStream();
+        StringBuffer stringBuffer = new StringBuffer();
         try {
             while (true) {
-                int x = in.read();
-                if (x==-1) break;
-                buf.append((char) ((byte) x));
+                int temp = inputStream.read();
+                if (temp==-1) break;
+                stringBuffer.append((char) ((byte) temp));
             }
         }
-        catch (Exception e) {in.close();}
+        catch (Exception e) {inputStream.close();}
         socket.close();
-        return buf;
+        return stringBuffer;
     }
-    ///
-    public void sendImage(String path) throws IOException {
+    public void sendImage(String pathOfImage) throws IOException {
         this.socket = this.serverSocket.accept();
-        OutputStream os = socket.getOutputStream();
-            FileInputStream fis = new FileInputStream(path);
-                byte[] b = new byte[1024];
-                int len;
-                while((len=fis.read(b))!=-1){
-                    os.write(b,0,len);
-                }
-            fis.close();
-        os.close();
+        OutputStream outputStream = socket.getOutputStream();
+            FileInputStream fileInputStream = new FileInputStream(pathOfImage);
+                byte[] temp = new byte[1024];int length;
+                while((length=fileInputStream.read(temp))!=-1){outputStream.write(temp,0,length);}
+            fileInputStream.close();
+        outputStream.close();
         socket.close();
     }
-    public void saveImage(String path) throws IOException {
+    public void saveImage(String pathOfImage) throws IOException {
         this.socket = this.serverSocket.accept();
-        InputStream is = socket.getInputStream();
-            FileOutputStream fos = new FileOutputStream(path);
-                byte[] b = new byte[1024];
-                int len;
-                while((len = is.read(b))!=-1){
-                    fos.write(b,0,len);
-                }
-            fos.flush();
-        is.close();
+        InputStream inputStream = socket.getInputStream();
+            FileOutputStream fileOutputStream = new FileOutputStream(pathOfImage);
+                byte[] temp = new byte[1024];int length;
+                while((length = inputStream.read(temp))!=-1){fileOutputStream.write(temp,0,length);}
+            fileOutputStream.flush();
+        inputStream.close();
         socket.close();
     }
 }

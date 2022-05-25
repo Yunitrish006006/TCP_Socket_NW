@@ -3,6 +3,7 @@ package Server;
 import GUI.Window;
 
 import javax.swing.*;
+import javax.swing.text.BadLocationException;
 import java.io.IOException;
 
 public class ImageReceiver implements Runnable{
@@ -14,23 +15,18 @@ public class ImageReceiver implements Runnable{
     @Override
     public void run() {
         while(true) {
-            MSGProcessor server = null;
-            try {
-                server = new MSGProcessor(Receiver.port+2);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            StringBuffer msg;
-            while (Receiver.connected) {
+            MSGProcessor processor = null;
+            try {processor = new MSGProcessor(Receiver.port+2);} catch (IOException ignored) {}
+            StringBuffer stringBuffer = new StringBuffer();
+            while (Receiver.connected && !stringBuffer.toString().equals("disconnected!!!")) {
                 try {
-                    msg = server.read();
-                    if (msg.toString().equals("disconnected!!!")) {
-                        break;
-                    }
-                    server.saveImage(msg.toString());
-                    window.display("Server(" + server.SIP + ")", new ImageIcon(msg.toString()), msg.toString());
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    stringBuffer = processor.readMessage();
+                    processor.saveImage(stringBuffer.toString());
+                    window.display("Server[" + processor.SIP + "]", new ImageIcon(stringBuffer.toString()), stringBuffer.toString());
+                } catch (Exception exception) {
+                    try {
+                        window.display("[Debug]",exception.toString());
+                    } catch (BadLocationException ignored) {}
                 }
             }
         }

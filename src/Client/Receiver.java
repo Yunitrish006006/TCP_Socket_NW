@@ -18,16 +18,8 @@ public class Receiver implements Runnable{
     public void run() {
         StringBuffer msg = null;
         while(true){
-            try {
-                msg = processor.read();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            try {
-                window.display("Server("+ processor.Destination +")",msg.toString());
-            } catch (BadLocationException e) {
-                throw new RuntimeException(e);
-            }
+            try {msg = processor.readMessage();} catch (Exception ignored) {}
+            try {window.display("Server["+ processor.Destination +"]",msg.toString());} catch (BadLocationException ignored) {}
         }
     }
 }

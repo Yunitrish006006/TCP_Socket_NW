@@ -19,12 +19,12 @@ public class ImageReceiver implements Runnable{
 
     @Override
     public void run() {
-        StringBuffer msg;
+        StringBuffer stringBuffer;
         while(true){
             try {
-                msg = processor.read();
-                processor.saveImage(msg.toString());
-                window.display("Server("+ processor.Destination + ")",new ImageIcon(msg.toString()), msg.toString());
+                stringBuffer = processor.readMessage();
+                processor.saveImage(stringBuffer.toString());
+                window.display("Server["+ processor.Destination + "]",new ImageIcon(stringBuffer.toString()), stringBuffer.toString());
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -9,56 +9,49 @@ public class MSGProcessor {
     public int Port;
     public InetAddress CIP;
 
+    public void sendMessage(String toSend) throws Exception {
+        this.socket = new Socket(Destination, Port);
+        OutputStream outputStream = this.socket.getOutputStream();
+        outputStream.write((toSend).getBytes(StandardCharsets.UTF_8));
+        outputStream.close();
+    }
+    public StringBuffer readMessage() throws Exception {
+        this.socket = new Socket(Destination, Port);
+        InputStream inputStream = this.socket.getInputStream();
+        StringBuffer stringBuffer = new StringBuffer();
+        try {
+            while (true) {
+                int input_result = inputStream.read();
+                if (input_result==-1) break;
+                stringBuffer.append((char)((byte) input_result));
+            }
+        }
+        catch (Exception e) {inputStream.close();}
+        return stringBuffer;
+    }
+    public void sendImage(String path) throws IOException {
+        this.socket = new Socket(Destination, Port);
+        OutputStream outputStream = socket.getOutputStream();
+        FileInputStream fileInputStream = new FileInputStream(new File(path));
+        byte[] temp = new byte[1024];int length;
+        while((length=fileInputStream.read(temp))!=-1) {outputStream.write(temp,0,length);}
+        fileInputStream.close();
+        outputStream.close();
+    }
+    public void saveImage(String path) throws IOException {
+        this.socket = new Socket(Destination, Port);
+        InputStream inputStream = socket.getInputStream();
+        FileOutputStream fileOutputStream = new FileOutputStream(new File(path));
+        byte[] temp = new byte[1024];int length;
+        while((length = inputStream.read(temp))!=-1) {fileOutputStream.write(temp,0,length);}
+        fileOutputStream.close();
+        inputStream.close();
+    }
+
     public MSGProcessor(String destination,int port) throws IOException {
         this.Destination = destination;
         this.Port = port;
         this.socket = new Socket(destination,port);
         this.CIP = socket.getInetAddress();
-    }
-    public void send(String msg) throws Exception {
-        this.socket = new Socket(Destination, Port);
-        OutputStream os = this.socket.getOutputStream();
-        os.write((msg).getBytes(StandardCharsets.UTF_8));
-        os.close();
-    }
-    public StringBuffer read() throws Exception {
-        this.socket = new Socket(Destination, Port);
-        InputStream in = this.socket.getInputStream();
-        StringBuffer buf = new StringBuffer();
-        try {
-            while (true) {
-                int x = in.read();
-                if (x==-1) break;
-                buf.append((char)((byte) x));
-            }
-        }
-        catch (Exception e) {in.close();}
-        return buf;
-    }
-    ////
-    public void sendImage(String path) throws IOException {
-        this.socket = new Socket(Destination, Port);
-        OutputStream os = socket.getOutputStream();
-        FileInputStream fis = new FileInputStream(new File(path));
-        byte[] b = new byte[1024];
-        int len;
-        while((len=fis.read(b))!=-1){
-            os.write(b,0,len);
-        }
-        fis.close();
-        os.close();
-    }
-    public void saveImage(String path) throws IOException {
-        this.socket = new Socket(Destination, Port);
-        InputStream is = socket.getInputStream();
-        FileOutputStream fos = new FileOutputStream(new File(path));
-        byte[] b = new byte[1024];
-        int len;
-        while((len = is.read(b))!=-1) {
-            fos.write(b,0,len);
-        }
-        System.out.println("[Debug] get file");
-        fos.close();
-        is.close();
     }
 }

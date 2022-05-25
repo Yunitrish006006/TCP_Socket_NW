@@ -7,64 +7,55 @@ import java.io.IOException;
 
 public class MainClient {
     public static void main(String[] args) throws IOException {
-        Window window = new Window("Client Window",1);
+        Window window = new Window("Client Window");
         window.defaultDestination();
         MSGProcessor processor;
-        window.connect.addActionListener(e -> {
-            if(!window.connected) {
+        window.linkButton.addActionListener(e -> {
+            if(!window.linked) {
                 System.out.println(window.IPText.getText());
-                window.connect.setText("離線");
-                window.connected = true;
+                window.linkButton.setText("離線");
+                window.linked = true;
             }
         });
-        while (!window.connected) {
-            System.out.println(" ");
-        }
+        while (!window.linked) {System.out.println(" ");}
         window.revalidate();
 
         processor = new MSGProcessor(window.IPText.getText(),Integer.parseInt(window.PortText.getText()));
         Receiver.Port = Integer.parseInt(window.PortText.getText())+1;
         Receiver receiver = new Receiver(window,window.IPText.getText());
         ImageReceiver imageReceiver = new ImageReceiver(window,window.IPText.getText());
-
-        Thread thread = new Thread(receiver);
-        thread.start();
-        Thread thread2 = new Thread(imageReceiver);
-        thread2.start();
-        ImageSender imageSender = new ImageSender(window,window.IPText.getText());
-        Thread thread3 = new Thread(imageSender);
-        thread3.start();
-
         MSGProcessor temp1 = processor;
         window.send.addActionListener(e -> {
             if (!window.type.getText().equals("")) {
                 try {
                     window.display("Client(" + temp1.CIP + ")", window.type.getText());
-                } catch (BadLocationException ex) {
-                    throw new RuntimeException(ex);
-                }
+                } catch (BadLocationException ignored) {}
                 window.revalidate();
                 try {
-                    temp1.send(window.type.getText());
-                } catch (Exception exception) {
-                    exception.printStackTrace();
-                }
+                    temp1.sendMessage(window.type.getText());
+                } catch (Exception ignored) {}
                 window.type.setText("");
             }
         });
         MSGProcessor temp = processor;
-        window.connect.addActionListener(e -> {
-            if(window.connected){
+        window.linkButton.addActionListener(e -> {
+            if(window.linked){
                 try {
-                    temp.send("disconnected!!!");
-                    ImageSender.processor.send("disconnected!!!");
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-                window.connected = false;
+                    temp.sendMessage("disconnected!!!");
+                    ImageSender.processor.sendMessage("disconnected!!!");
+                } catch (Exception ignored) {}
+                window.linked = false;
                 window.dispose();
                 System.exit(0);
             }
         });
+
+        Thread receiver_thread = new Thread(receiver);
+        receiver_thread.start();
+        Thread imageReceiver_thread = new Thread(imageReceiver);
+        imageReceiver_thread.start();
+        ImageSender imageSender = new ImageSender(window,window.IPText.getText());
+        Thread imageSender_thread = new Thread(imageSender);
+        imageSender_thread.start();
     }
 }

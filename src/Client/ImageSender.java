@@ -19,14 +19,13 @@ public class ImageSender implements Runnable{
     @Override
     public void run() {
         window.send.addActionListener(e -> {
-            if(!window.Path.getText().equals("")) {
+            if(!window.ImagePathText.getText().equals("")) {
                 try {
-                    String path = window.Path.getText();
-                    window.Path.setText("");
-                    processor.send(window.img_path);
-                    System.out.println(window.img_path);
-                    window.display("Client(" + processor.CIP + ")", new ImageIcon(path),path);
-                    processor.sendImage(path);
+                    String imagePathText = window.ImagePathText.getText();
+                    window.ImagePathText.setText("");
+                    processor.sendMessage(window.imagePathCache);
+                    window.display("Client(" + processor.CIP + ")", new ImageIcon(imagePathText),imagePathText);
+                    processor.sendImage(imagePathText);
                 } catch (Exception exception) {
                     JOptionPane.showMessageDialog(null, "No such file", "file error", JOptionPane.WARNING_MESSAGE);
                 }

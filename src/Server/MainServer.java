@@ -7,11 +7,11 @@ import java.io.IOException;
 
 public class MainServer {
     public static void main(String[] args) {
-        Window window = new Window("Server Window",0);
+        Window window = new Window("Server Window");
         window.defaultDestination();
-        window.connect.setText("關閉");
-        window.connect.addActionListener(e -> {
-            if (!window.connected) {
+        window.linkButton.setText("關閉");
+        window.linkButton.addActionListener(e -> {
+            if (!window.linked) {
                 window.dispose();
                 System.exit(0);
             }
@@ -45,7 +45,7 @@ public class MainServer {
                         }
                         window.revalidate();
                         try {
-                            temp.send(window.type.getText());
+                            temp.sendMessage(window.type.getText());
                         } catch (Exception ex) {
                             ex.printStackTrace();
                         }
