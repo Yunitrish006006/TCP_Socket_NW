@@ -3,18 +3,29 @@ import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+/*-------- MSGProcessor contains send/receive message/image method -------*/
 public class MSGProcessor {
+
     private Socket socket;
     public String Destination;
     public int Port;
     public InetAddress CIP;
 
+    /*-------------------Constructor------------------------*/
+    public MSGProcessor(String destination,int port) throws IOException {
+        this.Destination = destination;
+        this.Port = port;
+        this.socket = new Socket(destination,port);
+        this.CIP = socket.getInetAddress();
+    }
+    /*---------- Send message through socket ---------------*/
     public void sendMessage(String toSend) throws Exception {
         this.socket = new Socket(Destination, Port);
         OutputStream outputStream = this.socket.getOutputStream();
         outputStream.write((toSend).getBytes(StandardCharsets.UTF_8));
         outputStream.close();
     }
+    /*--------- Receive message from socket ----------------*/
     public StringBuffer readMessage() throws Exception {
         this.socket = new Socket(Destination, Port);
         InputStream inputStream = this.socket.getInputStream();
@@ -29,6 +40,7 @@ public class MSGProcessor {
         catch (Exception e) {inputStream.close();}
         return stringBuffer;
     }
+    /*--------- Send image through socket ------------------*/
     public void sendImage(String path) throws IOException {
         this.socket = new Socket(Destination, Port);
         OutputStream outputStream = socket.getOutputStream();
@@ -38,6 +50,7 @@ public class MSGProcessor {
         fileInputStream.close();
         outputStream.close();
     }
+    /*--------- Receive image from socket ------------------*/
     public void saveImage(String path) throws IOException {
         this.socket = new Socket(Destination, Port);
         InputStream inputStream = socket.getInputStream();
@@ -48,10 +61,4 @@ public class MSGProcessor {
         inputStream.close();
     }
 
-    public MSGProcessor(String destination,int port) throws IOException {
-        this.Destination = destination;
-        this.Port = port;
-        this.socket = new Socket(destination,port);
-        this.CIP = socket.getInetAddress();
-    }
 }

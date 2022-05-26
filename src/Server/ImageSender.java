@@ -7,11 +7,12 @@ import java.io.IOException;
 
 public class ImageSender implements Runnable{
     Window window;
-
+    /*----------------------Constructor-------------------------------*/
     public ImageSender(Window window){
         this.window = window;
     }
-
+    /*------------- Override run() method in thread ------------------*/
+    /*--------- Invoke this method through thread.start() ------------*/
     @Override
     public void run() {
         while (true) {

@@ -9,14 +9,15 @@ public class ImageReceiver implements Runnable{
     private Window window;
     private String Destination;
     public MSGProcessor processor;
-
+    /*-------------------- Constructor------------------------*/
     public ImageReceiver(Window window,String destination) throws IOException {
         this.window = window;
         this.Destination = destination;
         processor = new MSGProcessor(destination,Receiver.Port +2);
 
     }
-
+    /*------------- Override run() method in thread ------------------------*/
+    /*--------- Invoke this method through thread.start() ------------------*/
     @Override
     public void run() {
         StringBuffer stringBuffer;

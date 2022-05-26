@@ -8,16 +8,19 @@ import java.io.IOException;
 
 public class ImageReceiver implements Runnable{
     Window window;
-
+    /*-------------------- Constructor------------------------*/
     public ImageReceiver(Window window){
         this.window = window;
     }
+    /*------------- Override run() method in thread ------------------------*/
+    /*--------- Invoke this method through thread.start() ------------------*/
     @Override
     public void run() {
         while(true) {
             MSGProcessor processor = null;
             try {processor = new MSGProcessor(Receiver.port+2);} catch (IOException ignored) {}
             StringBuffer stringBuffer = new StringBuffer();
+
             while (Receiver.connected && !stringBuffer.toString().equals("disconnected!!!")) {
                 try {
                     stringBuffer = processor.readMessage();

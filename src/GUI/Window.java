@@ -6,6 +6,7 @@ import java.awt.*;
 import java.util.Objects;
 
 public class Window extends JFrame{
+    /*--------variable declaration----------*/
     public boolean linked = false;
     public String info="";
     public JTextField IPText;
@@ -17,6 +18,7 @@ public class Window extends JFrame{
     public String imagePathCache = "";
     public JLabel ImagePathText;
 
+    /*----------------------Constructor------------------------*/
     public Window(String Title) {
         super.setLocation(300,200);
         super.setVisible(true);
@@ -25,10 +27,12 @@ public class Window extends JFrame{
         super.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setUI();
     }
+    /*----------------- Auto fill IP & port -------------------*/
     public void defaultDestination() {
         IPText.setText("localhost");
         PortText.setText("5501");
     }
+    /*--------------- show interaction window -----------------*/
     public void setUI() {
         int max_y;
         /*----------------------frame--------------------------*/
@@ -81,11 +85,11 @@ public class Window extends JFrame{
             }
         });
         container.add(selectImage);
-
+        /*------------------- send button ---------------------*/
         send = new JButton("傳送");
         send.setBounds(70, max_y+30, 60, 23);
         container.add(send);
-
+        /*---------------- Image path label -------------------*/
         ImagePathText = new JLabel("");
         ImagePathText.setBounds(133,max_y+30,80,23);
         container.add(ImagePathText);
@@ -103,11 +107,13 @@ public class Window extends JFrame{
         super.setContentPane(container);
         super.setSize(360,506);
     }
+    /*--------------- display message on chat -----------------*/
     public void display(String user, String message) throws BadLocationException {
         info+=user+":"+message.replaceAll("\n","<br>");
         content.setText(info);
         this.revalidate();
     }
+    /*--------------- display image on chat -------------------*/
     public void display(String user, ImageIcon imageIcon,String img_path) {
         int width = imageIcon.getIconWidth();
         int height = imageIcon.getIconHeight();
@@ -115,9 +121,11 @@ public class Window extends JFrame{
             width = width*4/5;
             height = height*4/5;
         }
+
         Image image = imageIcon.getImage();
         image.getScaledInstance(width,height,Image.SCALE_SMOOTH);
         imageIcon.setImage(image);
+        /*----------- display on client chat-------------------*/
         if(user.startsWith("Client")) {
             info+="<p>"+user+":</p>";
             if(Objects.equals(img_path, "")) {
@@ -128,6 +136,7 @@ public class Window extends JFrame{
             }
 
         }
+        /*----------- display on server chat-------------------*/
         else if(user.startsWith("Server")){
             info+="<p>"+user+":</p>";
             if(Objects.equals(img_path, "")) {

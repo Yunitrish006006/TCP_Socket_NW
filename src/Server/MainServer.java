@@ -7,8 +7,11 @@ import java.io.IOException;
 
 public class MainServer {
     public static void main(String[] args) {
+        /*------------------ open interaction window -----------------*/
         Window window = new Window("Server Window");
         window.defaultDestination();
+
+        /*-------------- user press disconnect button ----------------*/
         window.linkButton.setText("關閉");
         window.linkButton.addActionListener(e -> {
             if (!window.linked) {
@@ -16,6 +19,7 @@ public class MainServer {
                 System.exit(0);
             }
         });
+        /*------------ Create & Start message/image thread -----------*/
         Receiver receiver = new Receiver(window);
         Thread thread = new Thread(receiver);
         thread.start();
@@ -33,13 +37,13 @@ public class MainServer {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
+            /*------------Server can send when connected  -----------*/
             while (Receiver.connected) {
                 MSGProcessor temp = server;
                 window.send.addActionListener(e -> {
                     if (!window.type.getText().equals("")) {
                         try {
-                            window.display("Server(" + temp.SIP + ")", window.type.getText());
+                            window.display("Server[" + temp.SIP + "]", window.type.getText());
                         } catch (BadLocationException ex) {
                             throw new RuntimeException(ex);
                         }

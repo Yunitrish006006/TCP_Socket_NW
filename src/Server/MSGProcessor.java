@@ -5,18 +5,22 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-
+/*-------- MSGProcessor contains send/receive message/image method -------*/
 public class MSGProcessor {
+
     private ServerSocket serverSocket;
     private Socket socket;
     public InetAddress CIP;
     public InetAddress SIP;
+
+    /*-------------------Constructor------------------------*/
     public MSGProcessor(int port) throws IOException {
         this.serverSocket = new ServerSocket(port);
         this.socket = this.serverSocket.accept();
         CIP = socket.getInetAddress();
         SIP = socket.getLocalAddress();
     }
+    /*---------- Send message through socket ---------------*/
     public void sendMessage(String msg) throws Exception {
         this.socket = this.serverSocket.accept();
         OutputStream outputStream = this.socket.getOutputStream();
@@ -24,6 +28,7 @@ public class MSGProcessor {
         outputStream.close();
         socket.close();
     }
+    /*--------- Receive message from socket ----------------*/
     public StringBuffer readMessage() throws Exception {
         this.socket = this.serverSocket.accept();
         InputStream inputStream = this.socket.getInputStream();
@@ -39,6 +44,7 @@ public class MSGProcessor {
         socket.close();
         return stringBuffer;
     }
+    /*--------- Send image through socket ------------------*/
     public void sendImage(String pathOfImage) throws IOException {
         this.socket = this.serverSocket.accept();
         OutputStream outputStream = socket.getOutputStream();
@@ -49,6 +55,7 @@ public class MSGProcessor {
         outputStream.close();
         socket.close();
     }
+    /*--------- Receive image from socket ------------------*/
     public void saveImage(String pathOfImage) throws IOException {
         this.socket = this.serverSocket.accept();
         InputStream inputStream = socket.getInputStream();
