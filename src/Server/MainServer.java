@@ -17,7 +17,7 @@ public class MainServer {
         window.defaultDestination();
 
         /*-------------- user press disconnect button ----------------*/
-        window.linkButton.setText("關閉");
+        window.linkButton.setText("離線");
         window.linkButton.addActionListener(e -> {
             if (!window.linked) {
                 window.dispose();
@@ -197,12 +197,10 @@ class Receiver implements Runnable{
     private Window window;
     public static boolean connected = true;
     public static int port= 5501;
-
     /*---------------------Constructor-----------------------*/
     public Receiver(Window window){
         this.window = window;
     }
-
     /*------------ Override run() method in thread -------------------*/
     /*---------- Invoke this method through thread.start() -----------*/
     @Override
